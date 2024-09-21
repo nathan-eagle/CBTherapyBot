@@ -1,0 +1,29 @@
+    name: Deploy to Digital Ocean
+
+    on:
+      push:
+        branches:
+          - main
+
+    jobs:
+      deploy:
+        runs-on: ubuntu-latest
+
+        steps:
+          - name: Checkout Code
+            uses: actions/checkout@v3
+
+          - name: Set up SSH
+            uses: webfactory/ssh-agent@v0.5.4
+            with:
+              ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+          - name: Deploy to Server
+            run: |
+              ssh telegrambot@67.207.87.95 << 'EOF'
+                cd /home/telegrambot/TelegramBot
+                git pull origin main
+                source venv/bin/activate
+                pip install -r requirements.txt
+                sudo systemctl restart telegrambot.service
+              EOF
