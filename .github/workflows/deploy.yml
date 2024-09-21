@@ -30,7 +30,9 @@ jobs:
         run: |
           ssh -o StrictHostKeyChecking=no telegrambot@67.207.87.95 << 'EOF'
             cd /home/telegrambot/TelegramBot
-            git pull origin main
+            
+            git fetch origin main
+            git reset --hard origin/main 
             source venv/bin/activate
             pip install -r requirements.txt
             sudo systemctl restart telegrambot.service
