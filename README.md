@@ -35,6 +35,21 @@ sudo systemctl restart telegrambot
 sudo systemctl status telegrambot # see status
 sudo journalctl -u telegrambot -f # check logs
 
+Git Commands:
+Check out the Desired Branch
+Pull the Latest Changes from Remote
+Make Your Changes Locally
+Stage (Add) Your Changes
+Commit Your Changes
+Push Your Changes to GitHub
+
+git checkout main
+git pull --no-rebase origin main
+# Resolve any merge conflicts if prompted
+git add .
+git commit -m "Merged changes from origin/main"
+git push origin main
+
 ### To Do
 
 - Button to swap LLMs: Decent / Indecent
@@ -46,7 +61,7 @@ sudo journalctl -u telegrambot -f # check logs
 - Save all audio content to disk
 - Use user's first name in the conversation
 - Periodically send messages to the user. Allow feature to opt out.
-- Sync with github
+- Sync with github and keep on praying
 
 
 ### Research
