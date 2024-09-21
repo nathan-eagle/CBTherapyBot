@@ -61,7 +61,6 @@ git push origin main
 - Save all audio content to disk
 - Use user's first name in the conversation
 - Periodically send messages to the user. Allow feature to opt out.
-- Sync with github and pray
 
 
 ### Research
