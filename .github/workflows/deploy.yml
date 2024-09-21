@@ -28,10 +28,18 @@ jobs:
       # 4. Deploy to the server
       - name: Deploy to Server
         run: |
-          ssh telegrambot@67.207.87.95 << 'EOF'
+          ssh -o StrictHostKeyChecking=no telegrambot@67.207.87.95 << 'EOF'
             cd /home/telegrambot/TelegramBot
             git pull origin main
             source venv/bin/activate
             pip install -r requirements.txt
             sudo systemctl restart telegrambot.service
           EOF
+
+      # 5. (Optional) Upload Deployment Logs for Debugging
+      - name: Upload Deployment Logs
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: deployment-log
+          path: deploy.log
