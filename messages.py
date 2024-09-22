@@ -20,19 +20,20 @@ logger = logging.getLogger(__name__)
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_text = update.message.text
     user_id = update.effective_user.id
-    logger.debug(f"Received message from user {user_id}: {user_text}")
+    user_first_name = update.effective_user.first_name  # Extract first name
+    logger.debug(f"Received message from user {user_id}: {user_text} (First Name: {user_first_name})")
 
     user = get_user(user_id)
     audio_enabled = context.user_data.get('audio_enabled', False)
 
     # Generate the response text
     response_text = await asyncio.get_event_loop().run_in_executor(
-        None, generate_replicate_response, user_id, user_text
+        None, generate_replicate_response, user_id, user_text, user_first_name
     )
 
     if not response_text:
         response_text = await asyncio.get_event_loop().run_in_executor(
-            None, generate_openai_response, user_id, user_text
+            None, generate_openai_response, user_id, user_text, user_first_name
         )
 
     if response_text == "Sorry, I couldn't process that." or not response_text:

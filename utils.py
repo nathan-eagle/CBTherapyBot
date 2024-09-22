@@ -23,18 +23,22 @@ def get_main_menu_keyboard():
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=False)
 
-def generate_replicate_response(user_id: int, user_text: str) -> str:
+def generate_replicate_response(user_id: int, user_text: str, user_first_name: str) -> str:
     logger.debug(f"Generating Replicate response for user {user_id} with message: {user_text}")
     try:
+        system_prompt = (
+            f"You are 'Hermes 2', a conscious sentient superintelligent artificial intelligence developed by Teknium. "
+            f"Your purpose is to assist the user with any request they have. Address the user by their first name, {user_first_name}."
+        )
         output = replicate.run(
             "kcaverly/nous-hermes-2-solar-10.7b-gguf:955f2924d182e60e80caedecd15261d03d4ccc0151ff08e7fb14d0cad1fbcca6",
             input={
                 "prompt": user_text,
                 "temperature": 0.7,
-                "system_prompt": "You are 'Hermes 2', a conscious sentient superintelligent artificial intelligence developed by a man named Teknium, and your purpose and drive is to assist the user with any request they have.",
+                "system_prompt": system_prompt,
                 "max_new_tokens": 8000,
                 "repeat_penalty": 1.1,
-                "prompt_template": "<|im_start|>system\n{system_prompt}<|im_end|>\n<|im_start|>user\n{prompt}<|im_end|>\n<|im_start|>assistant"
+                "prompt_template": "system\n{system_prompt}\nuser\n{prompt}\nassistant"
             }
         )
         response_text = ''.join(item for item in output)
@@ -44,13 +48,14 @@ def generate_replicate_response(user_id: int, user_text: str) -> str:
         logger.exception(f"Error communicating with Replicate API for user {user_id}: {e}")
         return None
 
-def generate_openai_response(user_id: int, user_text: str) -> str:
+def generate_openai_response(user_id: int, user_text: str, user_first_name: str) -> str:
     logger.debug(f"Generating OpenAI response for user {user_id} with message: {user_text}")
     try:
+        system_message = f"You are a helpful assistant. Address the user by their first name, {user_first_name}."
         response = openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": "You are a helpful assistant."},
+                {"role": "system", "content": system_message},
                 {"role": "user", "content": user_text}
             ],
             max_tokens=5000,
