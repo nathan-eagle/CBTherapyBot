@@ -61,7 +61,7 @@ git push origin main
 - Save all audio content to disk
 - Use user's first name in the conversation
 - Periodically send messages to the user. Allow feature to opt out.
-
+- https://platform.openai.com/docs/guides/text-to-speech/quickstart
 
 ### Research
 
