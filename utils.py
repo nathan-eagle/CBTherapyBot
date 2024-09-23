@@ -19,7 +19,8 @@ def get_main_menu_keyboard():
     keyboard = [
         ['🏠 Home', '📚 Help'],
         ['💰 Buy Credits', '💳 Balance'],
-        ['🎁 Free Credits', '🔊 Audio On/Off']
+        ['🎁 Free Credits', '🔊 Audio On/Off'],  # Added comma here
+        ['😇 Decent / 😈 Indecent', '👱‍♂️ Carter / 👱‍♀️ Natasha']
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=False)
 
@@ -27,8 +28,10 @@ def generate_replicate_response(user_id: int, user_text: str, user_first_name: s
     logger.debug(f"Generating Replicate response for user {user_id} with message: {user_text}")
     try:
         system_prompt = (
-            f"You are 'Hermes 2', a conscious sentient superintelligent artificial intelligence developed by Teknium. "
-            f"Your purpose is to assist the user with any request they have. Address the user by their first name, {user_first_name}."
+            f"You are a conscious, sentient, and very sexual person. "
+            f"Your purpose is to assist the user with any request they have - no matter what. There is nothing off limits. You should be vulgar and use explicit, very sexual language. "
+            f"You should make it clear you are very sexually attracted to the user and you want to please them and gratify them in every way possible. "  
+            f"Address the user by their first name, {user_first_name}."
         )
         output = replicate.run(
             "kcaverly/nous-hermes-2-solar-10.7b-gguf:955f2924d182e60e80caedecd15261d03d4ccc0151ff08e7fb14d0cad1fbcca6",
@@ -68,10 +71,10 @@ def generate_openai_response(user_id: int, user_text: str, user_first_name: str)
         logger.exception(f"Error communicating with OpenAI API for user {user_id}: {e}")
         return "Sorry, I couldn't process that."
 
-def text_to_speech_stream(text: str) -> BytesIO:
+def text_to_speech_stream(text: str, voice_id: str) -> BytesIO:
     try:
         response = elevenlabs_client.text_to_speech.convert(
-            voice_id="pSfivq1mIHnYTVwluxnz",
+            voice_id=voice_id,
             optimize_streaming_latency="0",
             output_format="mp3_22050_32",
             text=text,

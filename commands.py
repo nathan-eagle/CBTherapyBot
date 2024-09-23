@@ -63,3 +63,36 @@ async def reset_interactions(update: Update, context: ContextTypes.DEFAULT_TYPE)
     update_user(user_id, free_interactions_used=0)
     await update.message.reply_text("Your free interactions have been reset to 10.", reply_markup=get_main_menu_keyboard())
     logger.debug(f"Reset free interactions for user {user_id}.")
+
+async def toggle_llm(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    user = get_user(user_id)
+    current_llm = user['llm']
+    
+    # Toggle between 'Indecent' and 'Decent'
+    new_llm = 'Decent' if current_llm == 'Indecent' else 'Indecent'
+    update_user(user_id, llm=new_llm)
+    
+    status = "😇 Decent" if new_llm == 'Decent' else "😈 Indecent"
+    await update.message.reply_text(f"LLM has been set to {status}.", reply_markup=get_main_menu_keyboard())
+    logger.debug(f"Toggled LLM for user {user_id} to {new_llm}.")
+
+async def toggle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_id = update.effective_user.id
+    user = get_user(user_id)
+    current_voice = user['voice_id']
+    
+    # Toggle between 'Carter' and 'Natasha'
+    if current_voice == "pSfivq1mIHnYTVwluxnz":  # Carter
+        new_voice = "PB6BdkFkZLbI39GHdnbQ"  # Natasha
+        voice_name = "Natasha"
+        emoji = "👱‍♀️"
+    else:
+        new_voice = "pSfivq1mIHnYTVwluxnz"  # Carter
+        voice_name = "Carter"
+        emoji = "👱‍♂️"
+    
+    update_user(user_id, voice_id=new_voice)
+    
+    await update.message.reply_text(f"Voice has been set to {emoji} {voice_name}.", reply_markup=get_main_menu_keyboard())
+    logger.debug(f"Toggled voice for user {user_id} to {voice_name}.")

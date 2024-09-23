@@ -22,6 +22,7 @@ This is a Telegram bot that interacts with users by generating responses using O
 
 
 ### Deployment Service
+Remember to delete the .db file (which removes all user data) before deploying changes that impact the database.
 
 Restart the service after updating the .py file on hosted server:
 sudo systemctl stop telegrambot.service
@@ -44,8 +45,7 @@ Commit Your Changes
 Push Your Changes to GitHub
 
 git checkout main
-git pull --no-rebase origin main
-# Resolve any merge conflicts if prompted
+git pull --no-rebase origin main # Resolve any merge conflicts if prompted
 git add .
 git commit -m "Merged changes from origin/main"
 git push origin main
@@ -53,13 +53,12 @@ git push origin main
 ### To Do
 
 - Button to swap LLMs: Decent / Indecent
-- Button to swap voices: Carter / Cindy
-- Chunk at the end of a sentence
-- Add button to direct user to pay for more credits when they run out of free ones (?)
+- Button to swap between: OpenAI TTS / ElevenLabs
+- Button to swap voices: (if 11Labs: Carter / Cindy) / (else OpenAI: ?/?)
+- Chunk at the end of a sentence for long stories
 - Log all the chats in the database.db
-- Start page icons / content? 
 - Save all audio content to disk
-- Use user's first name in the conversation
+X Use user's first name in the conversation
 - Periodically send messages to the user. Allow feature to opt out.
 - https://platform.openai.com/docs/guides/text-to-speech/quickstart
 

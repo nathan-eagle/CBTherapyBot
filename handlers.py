@@ -5,9 +5,10 @@ from telegram.ext import (
     PreCheckoutQueryHandler, ContextTypes, filters
 )
 from config import MENU_OPTIONS
-from commands import start, help_command, toggle_audio, balance, reset_interactions
+from commands import start, help_command, toggle_audio, balance, reset_interactions, toggle_llm, toggle_voice
 from messages import handle_message, menu_handler
 from payments import pre_checkout_callback, successful_payment_callback, process_purchase_button, buy
+from utils import get_main_menu_keyboard
 
 logger = logging.getLogger(__name__)
 
@@ -45,3 +46,32 @@ async def error_handler(update: object, context: ContextTypes.DEFAULT_TYPE) -> N
             )
         except Exception as e:
             logger.exception(f"Failed to send error message to user: {e}")
+
+# Update the menu_handler to handle new menu options
+async def menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
+    user_text = update.message.text
+    user_id = update.effective_user.id
+    logger.debug(f"Received menu button press from user {user_id}: {user_text}")
+
+    from commands import start, help_command, balance, reset_interactions, toggle_audio, toggle_llm, toggle_voice
+    from payments import buy
+
+    if user_text == '🏠 Home':
+        await start(update, context)
+    elif user_text == '📚 Help':
+        await help_command(update, context)
+    elif user_text == '💰 Buy Credits':
+        await buy(update, context)
+    elif user_text == '💳 Balance':
+        await balance(update, context)
+    elif user_text == '🎁 Free Credits':
+        await reset_interactions(update, context)
+    elif user_text == '🔊 Audio On/Off':
+        await toggle_audio(update, context)
+    elif user_text == '😇 Decent / 😈 Indecent':
+        await toggle_llm(update, context)
+    elif user_text == '👱‍♂️ Carter / 👱‍♀️ Natasha':
+        await toggle_voice(update, context)
+    else:
+        await update.message.reply_text("Please choose an option from the menu below.", reply_markup=get_main_menu_keyboard())
+        logger.debug(f"User {user_id} sent an unexpected input: {user_text}")

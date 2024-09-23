@@ -13,7 +13,9 @@ def initialize_database():
         CREATE TABLE IF NOT EXISTS users (
             user_id INTEGER PRIMARY KEY,
             free_interactions_used INTEGER NOT NULL DEFAULT 0,
-            indecent_credits INTEGER NOT NULL DEFAULT 0
+            indecent_credits INTEGER NOT NULL DEFAULT 0,
+            llm TEXT NOT NULL DEFAULT 'Indecent',  -- Added column for LLM
+            voice_id TEXT NOT NULL DEFAULT 'PB6BdkFkZLbI39GHdnbQ'  -- Added column for Voice (Natasha by default)
         )
     ''')
     
@@ -35,19 +37,23 @@ def initialize_database():
 def get_user(user_id):
     conn = sqlite3.connect('bot_database.db')
     cursor = conn.cursor()
-    cursor.execute('SELECT free_interactions_used, indecent_credits FROM users WHERE user_id = ?', (user_id,))
+    cursor.execute('SELECT free_interactions_used, indecent_credits, llm, voice_id FROM users WHERE user_id = ?', (user_id,))
     row = cursor.fetchone()
     if row:
         user = {
             'free_interactions_used': row[0],
-            'indecent_credits': row[1]
+            'indecent_credits': row[1],
+            'llm': row[2],
+            'voice_id': row[3]
         }
     else:
         cursor.execute('INSERT INTO users (user_id) VALUES (?)', (user_id,))
         conn.commit()
         user = {
             'free_interactions_used': 0,
-            'indecent_credits': 0
+            'indecent_credits': 0,
+            'llm': 'Indecent',  # Default LLM
+            'voice_id': 'PB6BdkFkZLbI39GHdnbQ'  # Default Voice (Natasha)
         }
     conn.close()
     logger.debug(f"Retrieved user {user_id}: {user}")
@@ -92,14 +98,3 @@ def store_payment_id(user_id, payment_id, credits):
     conn.commit()
     conn.close()
     logger.debug(f"Stored payment ID {payment_id} for user {user_id}")
-
-# def get_user_payments(user_id):
-#     conn = sqlite3.connect('bot_database.db')
-#     cursor = conn.cursor()
-#     cursor.execute('SELECT payment_id, credits, timestamp FROM payments WHERE user_id = ? ORDER BY timestamp DESC', (user_id,))
-#     payments = cursor.fetchall()
-#     conn.close()
-#     return [{'payment_id': row[0], 'credits': row[1], 'timestamp': row[2]} for row in payments]
-
-# # You might want to add more functions here for other database operations,
-# # such as retrieving payment history, checking for refunds, etc.

@@ -25,15 +25,16 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     user = get_user(user_id)
     audio_enabled = context.user_data.get('audio_enabled', False)
+    user_llm = user.get('llm', 'Indecent')  # Default to 'Indecent' if not set
 
-    # Generate the response text
-    response_text = await asyncio.get_event_loop().run_in_executor(
-        None, generate_replicate_response, user_id, user_text, user_first_name
-    )
-
-    if not response_text:
+    # Generate the response text based on the user's selected LLM
+    if user_llm == 'Decent':
         response_text = await asyncio.get_event_loop().run_in_executor(
             None, generate_openai_response, user_id, user_text, user_first_name
+        )
+    else:
+        response_text = await asyncio.get_event_loop().run_in_executor(
+            None, generate_replicate_response, user_id, user_text, user_first_name
         )
 
     if response_text == "Sorry, I couldn't process that." or not response_text:
@@ -47,7 +48,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     # Handle audio response
     if audio_enabled:
-        audio_bytes = text_to_speech_stream(response_text)
+        # Pass the user's voice_id to the text_to_speech_stream function
+        audio_bytes = text_to_speech_stream(response_text, user['voice_id'])
         if audio_bytes is None:
             logger.error(f"Failed to generate audio for user {user_id}")
             await update.message.reply_text(
@@ -63,7 +65,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     else:
         num_chars = len(response_text)
         credits_needed = math.ceil(num_chars / 1000) * CREDIT_COST_PER_1000_CHARS
-
 
     # Check and deduct credits
     if user['free_interactions_used'] < FREE_INTERACTIONS:
