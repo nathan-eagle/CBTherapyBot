@@ -21,8 +21,8 @@ logger = logging.getLogger(__name__)
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_text = update.message.text
     user_id = update.effective_user.id
-    user_first_name = update.effective_user.first_name  # Extract first name
-    username = update.effective_user.username or user_first_name  # Use username if available
+    user_first_name = update.effective_user.first_name
+    username = update.effective_user.username or user_first_name
     logger.debug(f"Received message from user {user_id}: {user_text} (Username: {username})")
 
     user = get_user(user_id)
@@ -83,8 +83,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             "You don't have enough Indecent Credits. Please purchase more to continue.",
             reply_markup=get_main_menu_keyboard()
         )
-        await send_invoice(update, context, credits_needed)
-        return
+        return  # Removed the send_invoice call
 
     # Log the interaction
     log_interaction(username, user_text, response_text)
