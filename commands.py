@@ -15,7 +15,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     welcome_text = (
         f"Hey there {update.effective_user.first_name}! Welcome! 😈😈 \n\n"
-        f"Since you're new, you get {free_left} free interactions.\n\n"
+        f"You've got {free_left} free interactions left.\n\n"
         f"If you run out, you just need to buy more Indecent Credits via the menu below.\n\n"
        
     )
