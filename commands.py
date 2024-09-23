@@ -14,10 +14,10 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     indecent_credits = user['indecent_credits']
 
     welcome_text = (
-        f"Hey there {update.effective_user.first_name}! I'm Denzel. Are you ready to hear something indecent? 😈😈 \n\n"
-        f"You have {free_left} free interactions left.\n"
-        f"You currently have {indecent_credits} Indecent Credits.\n\n"
-        f"Use the menu below to navigate through my features."
+        f"Hey there {update.effective_user.first_name}! Welcome! 😈😈 \n\n"
+        f"Since you're new, you get {free_left} free interactions.\n\n"
+        f"If you run out, you just need to buy more Indecent Credits via the menu below.\n\n"
+       
     )
 
     await update.message.reply_text(welcome_text, reply_markup=get_main_menu_keyboard())
