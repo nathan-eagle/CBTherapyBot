@@ -7,7 +7,8 @@ from utils import (
     get_main_menu_keyboard,
     generate_replicate_response,
     generate_openai_response,
-    text_to_speech_stream
+    text_to_speech_stream,
+    log_interaction  # Import the logging function
 )
 from database import get_user, increment_free_interactions, update_user
 from config import FREE_INTERACTIONS, CREDIT_COST_PER_SECOND_AUDIO, CREDIT_COST_PER_1000_CHARS
@@ -21,7 +22,8 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
     user_text = update.message.text
     user_id = update.effective_user.id
     user_first_name = update.effective_user.first_name  # Extract first name
-    logger.debug(f"Received message from user {user_id}: {user_text} (First Name: {user_first_name})")
+    username = update.effective_user.username or user_first_name  # Use username if available
+    logger.debug(f"Received message from user {user_id}: {user_text} (Username: {username})")
 
     user = get_user(user_id)
     audio_enabled = context.user_data.get('audio_enabled', False)
@@ -83,6 +85,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         )
         await send_invoice(update, context, credits_needed)
         return
+
+    # Log the interaction
+    log_interaction(username, user_text, response_text)
 
     # Send the response
     if audio_enabled:

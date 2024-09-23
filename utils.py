@@ -6,6 +6,7 @@ import replicate
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from config import OPENAI_API_KEY, ELEVENLABS_API_KEY, REPLICATE_API_TOKEN
+import datetime
 
 logger = logging.getLogger(__name__)
 
@@ -96,3 +97,16 @@ def text_to_speech_stream(text: str, voice_id: str) -> BytesIO:
     except Exception as e:
         logger.exception(f"Error in text_to_speech_stream: {e}")
         return None
+
+def log_interaction(username: str, user_input: str, llm_response: str) -> None:
+    """
+    Logs the interaction to a tab-delimited 'logs.txt' file with timestamp, username, user input, and LLM response.
+    """
+    timestamp = datetime.datetime.utcnow().isoformat()
+    log_line = f"{timestamp}\t{username}\t{user_input}\t{llm_response}\n"
+    try:
+        with open("logs.txt", "a", encoding="utf-8") as log_file:
+            log_file.write(log_line)
+        logger.debug(f"Logged interaction for user {username}")
+    except Exception as e:
+        logger.exception(f"Failed to write log: {e}")
