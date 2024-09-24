@@ -56,7 +56,6 @@ git push origin main
 - Save all audio content to disk
 - Periodically send messages to the user. Allow feature to opt out.
 - Include purchasing and free credits in logs
-- Add Onyx (male) and Nova (female) voices from OpenAI tts. 
 
 
 ### Research
