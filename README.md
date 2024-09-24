@@ -55,11 +55,18 @@ git push origin main
 - Chunk at the end of a sentence for long stories
 - Save all audio content to disk
 - Periodically send messages to the user. Allow feature to opt out.
-- Include purchasing and free credits in logs
+
 
 
 ### Research
 
 - Improve indecent LLM latency
 - Share / post the good stories anonymously
-- OpenAI TTS? https://platform.openai.com/docs/guides/text-to-speech/quickstart
+- Pricing: Add a free (openai tts) and premium (elevenlabs) tier?
+
+
+### Costs
+
+- ElevenLabs TTS: ~$150 / 1M characters(3k character story =~$0.50) ** need to double check **
+- OpenAI TTS: $15 / 1M characters (3k character story = $0.05)
+- Replicate: $0.000575 / second (~20 secs/story = $0.01) *but most cost is booting up in queue? - double check*

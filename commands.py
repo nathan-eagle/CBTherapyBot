@@ -1,7 +1,7 @@
 import logging
 from telegram import Update
 from telegram.ext import ContextTypes
-from utils import get_main_menu_keyboard
+from utils import get_main_menu_keyboard, log_interaction
 from database import get_user, update_user
 from config import FREE_INTERACTIONS
 
@@ -15,9 +15,9 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 
     welcome_text = (
         f"Hey there {update.effective_user.first_name}! Welcome! 😈😈 \n\n"
-        f"You've got {free_left} free interactions left.\n\n"
+        f"You've got {free_left} free interactions left.\n"
         f"If you run out, you just need to buy more Indecent Credits via the menu below.\n\n"
-       
+        f"⚠️ Hold tight! The first interaction might be a bit slow as the system warms up from a cold start. 🥱 \n\n"
     )
 
     await update.message.reply_text(welcome_text, reply_markup=get_main_menu_keyboard())
@@ -43,6 +43,9 @@ async def toggle_audio(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     status = "enabled" if user_data['audio_enabled'] else "disabled"
     await update.message.reply_text(f"Audio responses have been {status}.", reply_markup=get_main_menu_keyboard())
     logger.debug(f"Audio responses have been {status} for user {update.effective_user.id}.")
+    
+    # Log the specific selection
+    log_interaction(update.effective_user.username or update.effective_user.first_name, f"Audio responses {status}", "Toggle audio")
 
 
 async def balance(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -76,6 +79,9 @@ async def toggle_llm(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None
     status = "😇 Decent" if new_llm == 'Decent' else "😈 Indecent"
     await update.message.reply_text(f"LLM has been set to {status}.", reply_markup=get_main_menu_keyboard())
     logger.debug(f"Toggled LLM for user {user_id} to {new_llm}.")
+    
+    # Log the specific selection
+    log_interaction(update.effective_user.username or update.effective_user.first_name, f"LLM set to {status}", "Toggle LLM")
 
 async def toggle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
@@ -104,3 +110,6 @@ async def toggle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     
     await update.message.reply_text(f"Voice has been set to {emoji} {voice_name}.", reply_markup=get_main_menu_keyboard())
     logger.debug(f"Toggled voice for user {user_id} to {voice_name}.")
+    
+    # Log the specific selection
+    log_interaction(update.effective_user.username or update.effective_user.first_name, f"Voice set to {voice_name}", "Toggle voice")

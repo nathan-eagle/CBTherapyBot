@@ -8,7 +8,7 @@ from config import MENU_OPTIONS
 from commands import start, help_command, toggle_audio, balance, reset_interactions, toggle_llm, toggle_voice
 from messages import handle_message, menu_handler
 from payments import pre_checkout_callback, successful_payment_callback, process_purchase_button, buy
-from utils import get_main_menu_keyboard
+from utils import get_main_menu_keyboard, log_interaction
 
 logger = logging.getLogger(__name__)
 
@@ -55,6 +55,9 @@ async def menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
 
     from commands import start, help_command, balance, reset_interactions, toggle_audio, toggle_llm, toggle_voice
     from payments import buy
+
+    # Log the menu button press
+    log_interaction(update.effective_user.username or update.effective_user.first_name, user_text, "Menu button press")
 
     if user_text == '🏠 Home':
         await start(update, context)

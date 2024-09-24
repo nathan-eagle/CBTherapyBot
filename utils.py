@@ -7,6 +7,7 @@ from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from config import OPENAI_API_KEY, ELEVENLABS_API_KEY, REPLICATE_API_TOKEN
 import datetime
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -124,8 +125,14 @@ def log_interaction(username: str, user_input: str, llm_response: str) -> None:
     timestamp = datetime.datetime.utcnow().isoformat()
     log_line = f"{timestamp}\t{username}\t{user_input}\t{llm_response}\n"
     try:
-        with open("logs.txt", "a", encoding="utf-8") as log_file:
-            log_file.write(log_line)
+        if os.path.exists("logs.txt"):
+            with open("logs.txt", "r+", encoding="utf-8") as log_file:
+                existing_logs = log_file.read()
+                log_file.seek(0, 0)
+                log_file.write(log_line + existing_logs)
+        else:
+            with open("logs.txt", "w", encoding="utf-8") as log_file:
+                log_file.write(log_line)
         logger.debug(f"Logged interaction for user {username}")
     except Exception as e:
         logger.exception(f"Failed to write log: {e}")

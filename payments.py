@@ -3,13 +3,16 @@ from telegram import Update, LabeledPrice, InlineKeyboardButton, InlineKeyboardM
 from telegram.ext import ContextTypes
 from database import add_credits, store_payment_id
 from config import CREDIT_PACKAGES
-from utils import get_main_menu_keyboard
+from utils import get_main_menu_keyboard, log_interaction
 
 logger = logging.getLogger(__name__)
 
 async def buy(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     user_id = update.effective_user.id
     logger.debug(f"Buy function called for user {user_id}")
+
+    # Log the purchase attempt
+    log_interaction(update.effective_user.username or update.effective_user.first_name, "Attempt to buy credits", "Purchase attempt")
 
     keyboard = [
         [
@@ -47,6 +50,9 @@ async def process_purchase_button(update: Update, context: ContextTypes.DEFAULT_
         await query.answer(text="Invalid credit package selected.")
         logger.warning(f"User {user_id} selected an invalid credit package: {credits}")
         return
+
+    # Log the purchase size
+    log_interaction(query.from_user.username or query.from_user.first_name, f"Attempt to purchase {credits} credits", "Purchase size")
 
     await query.answer()
     await send_invoice(update, context, credits)
@@ -116,10 +122,12 @@ async def successful_payment_callback(update: Update, context: ContextTypes.DEFA
     # Store the payment ID for potential refunds
     store_payment_id(user_id, payment.telegram_payment_charge_id, credits)
 
+    # Log the successful purchase
+    log_interaction(update.effective_user.username or update.effective_user.first_name, f"Purchased {credits} credits", "Purchase successful")
+
     confirmation_text = (
         f"Thank you for your purchase!\n"
         f"You have been credited with {credits} Indecent Credits.\n"
-        #f"You have spent ${payment.total_amount / 100:.2f}."
     )
     await update.message.reply_text(confirmation_text, reply_markup=get_main_menu_keyboard())
     logger.debug(f"Successfully processed payment for user {user_id}. Added {credits} credits.")
