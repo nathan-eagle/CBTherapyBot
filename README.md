@@ -52,17 +52,24 @@ git push origin main
 
 ### To Do
 
+- Change prompt based on the voice character. OpenAI voices need to be more restricted than ElevenLabs.
+- Add a welcome message when they choose a character. 
+- Change prompt based on the voice character. OpenAI voices need to be more restricted than ElevenLabs.
+- Clear command to reset the conversation /clear Reset your AI (robot icon)
+- Add four characters to the command menu + world's hottest texting -> which then lets you pick between Carter and Natasha.
 - Chunk at the end of a sentence for long stories
 - Save all audio content to disk
-- Periodically send messages to the user. Allow feature to opt out.
+- Periodically send messages to (paying) users. Allow feature to opt out.
+
 
 
 
 ### Research
 
 - Improve indecent LLM latency
-- Share / post the good stories anonymously
-- Pricing: Add a free (openai tts) and premium (elevenlabs) tier?
+- Share / post the good stories anonymously - add a share button 
+- Pricing: Character based pricing, and text only based pricing. 
+- Add a "tip" button for users to tip the character
 
 
 ### Costs
