@@ -52,17 +52,15 @@ git push origin main
 
 ### To Do
 
-- Button to swap LLMs: Decent / Indecent
-- Button to swap between: OpenAI TTS / ElevenLabs
-- Button to swap voices: (if 11Labs: Carter / Cindy) / (else OpenAI: ?/?)
 - Chunk at the end of a sentence for long stories
-- Log all the chats in the database.db
 - Save all audio content to disk
-X Use user's first name in the conversation
 - Periodically send messages to the user. Allow feature to opt out.
-- https://platform.openai.com/docs/guides/text-to-speech/quickstart
+- Include purchasing and free credits in logs
+- Add Onyx (male) and Nova (female) voices from OpenAI tts. 
+
 
 ### Research
 
 - Improve indecent LLM latency
 - Share / post the good stories anonymously
+- OpenAI TTS? https://platform.openai.com/docs/guides/text-to-speech/quickstart

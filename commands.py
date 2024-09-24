@@ -82,11 +82,19 @@ async def toggle_voice(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     user = get_user(user_id)
     current_voice = user['voice_id']
     
-    # Toggle between 'Carter' and 'Natasha'
+    # Toggle between 'Carter', 'Natasha', 'Onyx', and 'Nova'
     if current_voice == "pSfivq1mIHnYTVwluxnz":  # Carter
         new_voice = "PB6BdkFkZLbI39GHdnbQ"  # Natasha
         voice_name = "Natasha"
         emoji = "👱‍♀️"
+    elif current_voice == "PB6BdkFkZLbI39GHdnbQ":  # Natasha
+        new_voice = "onyx"  # Onyx (OpenAI)
+        voice_name = "Onyx"
+        emoji = "👨‍🦱"
+    elif current_voice == "onyx":  # Onyx
+        new_voice = "nova"  # Nova (OpenAI)
+        voice_name = "Nova"
+        emoji = "👩‍🦱"
     else:
         new_voice = "pSfivq1mIHnYTVwluxnz"  # Carter
         voice_name = "Carter"

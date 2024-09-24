@@ -74,6 +74,9 @@ def generate_openai_response(user_id: int, user_text: str, user_first_name: str)
 
 def text_to_speech_stream(text: str, voice_id: str) -> BytesIO:
     try:
+        if voice_id in ["onyx", "nova"]:
+            return openai_text_to_speech(text, voice_id)
+        
         response = elevenlabs_client.text_to_speech.convert(
             voice_id=voice_id,
             optimize_streaming_latency="0",
@@ -96,6 +99,22 @@ def text_to_speech_stream(text: str, voice_id: str) -> BytesIO:
         return audio_stream
     except Exception as e:
         logger.exception(f"Error in text_to_speech_stream: {e}")
+        return None
+
+def openai_text_to_speech(text: str, voice: str) -> BytesIO:
+    try:
+        response = openai_client.audio.speech.create(
+            model="tts-1",  # The HD TTS model ("tts-1-hd") is $30/million characters. Standard TTS is $15/million. (model"tts-1")
+            voice=voice,
+            input=text
+        )
+        
+        audio_stream = BytesIO()
+        audio_stream.write(response.content)
+        audio_stream.seek(0)
+        return audio_stream
+    except Exception as e:
+        logger.exception(f"Error in openai_text_to_speech: {e}")
         return None
 
 def log_interaction(username: str, user_input: str, llm_response: str) -> None:
