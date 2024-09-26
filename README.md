@@ -44,6 +44,13 @@ Stage (Add) Your Changes
 Commit Your Changes
 Push Your Changes to GitHub
 
+
+To delete all local changes and reset to the remote branch:
+git reset --hard
+git fetch origin
+git reset --hard origin/main
+
+To make changes to the remote branch:
 git checkout main
 git pull --no-rebase origin main # Resolve any merge conflicts if prompted
 git add .
