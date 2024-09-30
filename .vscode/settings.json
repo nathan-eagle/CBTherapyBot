@@ -1,8 +1,0 @@
-{
-    "python.formatting.provider": "autopep8",
-    "editor.formatOnSave": true,
-    "editor.formatOnPaste": true,
-    "python.linting.enabled": true,
-    "python.linting.autopep8Enabled": true,
-    "python.linting.lintOnSave": true
-}
