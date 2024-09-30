@@ -18,16 +18,18 @@ CREDIT_COST_PER_1000_CHARS = 1
 # Menu options
 
 MENU_OPTIONS = [
-    '🏠 Home', 
-    '📚 Help', 
-    '💰 Buy Credits', 
-    '💳 Balance', 
-    '🎁 Free Credits', 
+    '🏠 Home',
+    '📚 Help',
+    '💰 Buy Credits',
+    '💳 Balance',
+    '🎁 Free Credits',
     '🔊 Audio On/Off',
     '😇 Decent / 😈 Indecent',
-    '👱‍♂️ Carter / 👱‍♀️ Natasha'
+    '💀 Nova',
+    '💔 Carter',
+    '💋 Natasha',
+    '🔥 Onyx'
 ]
-
 # Credit packages
 CREDIT_PACKAGES = {
     'purchase_50_credits': {'credits': 50},
