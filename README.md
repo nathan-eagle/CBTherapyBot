@@ -59,6 +59,7 @@ git push origin main
 
 ### To Do
 
+- Create ping replicate periodically after an initial response to keep it warm.
 - Change prompt based on the voice character. OpenAI voices need to be more restricted than ElevenLabs.
 - Add a welcome message when they choose a character. 
 - Change prompt based on the voice character. OpenAI voices need to be more restricted than ElevenLabs.

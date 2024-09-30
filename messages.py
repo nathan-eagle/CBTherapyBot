@@ -50,15 +50,9 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     # Generate the response text based on the user's selected LLM
     if user_llm == 'Decent':
-        # OpenAI response generation (Decent mode)
-        response_text = await asyncio.get_event_loop().run_in_executor(
-            None, generate_openai_response, user_id, user_text, user_first_name, character_prompt
-        )
+        response_text = await generate_openai_response(user_id, user_text, user_first_name, character_prompt)
     else:
-        # Replicate response generation (Indecent mode)
-        response_text = await asyncio.get_event_loop().run_in_executor(
-            None, generate_replicate_response, user_id, user_text, user_first_name, voice_id, character_prompt
-        )
+        response_text = await generate_replicate_response(user_id, user_text, user_first_name, character_prompt)
 
     if not response_text or response_text == "Sorry, I couldn't process that.":
         await update.message.reply_text("Sorry, I couldn't process that.", reply_markup=get_main_menu_keyboard())

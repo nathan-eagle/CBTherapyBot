@@ -15,6 +15,11 @@ FREE_INTERACTIONS = 10
 CREDIT_COST_PER_SECOND_AUDIO = .833
 CREDIT_COST_PER_1000_CHARS = 1
 
+# Replicate ping settings
+PING_REPLICATE = False # this is a flag of the state indicator of the pinger
+PING_FREQUENCY = 60    # in seconds
+PING_TIMEOUT = 600      # in seconds
+
 # Menu options
 
 MENU_OPTIONS = [
