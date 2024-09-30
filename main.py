@@ -8,7 +8,7 @@ from utils import pinger
 
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.DEBUG  # Set to DEBUG for development, INFO or WARNING in production
+    level=logging.WARNING  # Set to DEBUG for development, INFO or WARNING in production
 )
 logger = logging.getLogger(__name__)
 
