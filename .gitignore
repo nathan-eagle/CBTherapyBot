@@ -6,4 +6,3 @@ __pycache__/
 .env
 bot_database.db
 logs.txt 
-
