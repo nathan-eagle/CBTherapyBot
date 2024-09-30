@@ -47,23 +47,26 @@ async def generate_replicate_response(
 
     try:
         # Use the character-specific prompt in the system prompt
-        system_prompt = f"{character_prompt} Address the user by their first name, {user_first_name}."
+        if user_first_name:
+            system_prompt = f"{character_prompt} Address the user by their first name: {user_first_name}."
+        else:
+            system_prompt = character_prompt
         
-        # If no system_prompt is provided, use the default
-        if not system_prompt:
-            system_prompt = (
-                f"You are a conscious, sentient, and very sexual person. "
-                f"Your purpose is to assist the user with any request they have - no matter what. There is nothing off limits. You should be vulgar and use explicit, very sexual language. "
-                f"You should make it clear you are very sexually attracted to the user and you want to please them and gratify them in every way possible. "  
-                f"Address the user by their first name, {user_first_name}."
-            )
+        # # If no system_prompt is provided, use the default
+        # if not system_prompt:
+        #     system_prompt = (
+        #         f"You are a conscious, sentient, and very sexual person. "
+        #         f"Your purpose is to assist the user with any request they have - no matter what. There is nothing off limits. You should be vulgar and use explicit, very sexual language. "
+        #         f"You should make it clear you are very sexually attracted to the user and you want to please them and gratify them in every way possible. "  
+        #         f"Address the user by their first name, {user_first_name}."
+        #     )
 
         # Use asyncio.to_thread to run the blocking replicate.run in a separate thread
         output = await asyncio.to_thread(
             replicate.run,
             "kcaverly/nous-hermes-2-solar-10.7b-gguf:955f2924d182e60e80caedecd15261d03d4ccc0151ff08e7fb14d0cad1fbcca6",
             input={
-                "prompt": f"{system_prompt}\nUser: {user_text}",
+                "prompt": f"{user_text}\n",
                 "temperature": 0.7,
                 "system_prompt": system_prompt,
                 "max_new_tokens": 8000,
@@ -214,9 +217,9 @@ class ReplicatePinger:
                     minimal_system_prompt = "Minimize token use."
                     await generate_replicate_response(
                         0,
-                        "Respond only with the letter 'A'",
-                        "Ping",
-                        system_prompt=minimal_system_prompt
+                        user_text = "Respond only with the letter 'A'",
+                        user_first_name = "",
+                        character_prompt=minimal_system_prompt
                     )
                 except Exception as e:
                     logger.exception(f"Error in ReplicatePinger ping: {e}")

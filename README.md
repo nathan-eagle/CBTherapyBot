@@ -52,7 +52,7 @@ git pull origin main
 If there are merge conflicts between your local changes and the changes from the remote repository, Git will prompt you to resolve them. Open the conflicting files, resolve the issues manually, and then:
 git add <file_with_conflict>
 git commit
-git push origin main # to push the local updates back to the remote branch
+git push origin main # or git pull --rebase origin main #  to push the local updates back to the remote branch
 
 
 To delete all local changes and reset to the remote branch:
