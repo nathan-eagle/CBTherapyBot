@@ -85,7 +85,7 @@ async def menu_handler(update: Update, context: ContextTypes.DEFAULT_TYPE) -> No
     elif user_text == '😇 Decent / 😈 Indecent':
         await toggle_llm(update, context)
     elif user_text in ['💀 Nova', '💔 Carter', '💋 Natasha', '🔥 Onyx']:
-        # Call without passing the character name explicitly
+        # Handle character selection
         await select_character(update, context)
     else:
         await update.message.reply_text("Please choose an option from the menu below.", reply_markup=get_main_menu_keyboard())

@@ -21,16 +21,11 @@ replicate.api_token = REPLICATE_API_TOKEN
 
 
 def get_main_menu_keyboard():
-    """Returns the main menu keyboard."""
+    """Returns the main menu keyboard arranged in a 3x2 grid."""
     keyboard = [
-        ['🏠 Home', '📚 Help'],
-        ['💰 Buy Credits', '💳 Balance'],
-        ['🎁 Free Credits', '🔊 Audio On/Off'],
-        ['😇 Decent / 😈 Indecent'],
-        ['💀 Nova'],
-        ['💔 Carter'],
-        ['💋 Natasha'],
-        ['🔥 Onyx']
+        ['💋 Natasha', '💔 Carter'],
+        ['💀 Nova', '🔥 Onyx'],
+        ['💰 Buy Credits', '🔊 Audio On/Off']
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=False)
 
@@ -138,7 +133,6 @@ def text_to_speech_stream(text: str, voice_id: str) -> BytesIO:
         logger.exception(f"Error in text_to_speech_stream: {e}")
         return None
 
-
 def openai_text_to_speech(text: str, voice: str) -> BytesIO:
     """Converts text to speech using OpenAI's TTS service."""
     try:
@@ -155,7 +149,6 @@ def openai_text_to_speech(text: str, voice: str) -> BytesIO:
     except Exception as e:
         logger.exception(f"Error in openai_text_to_speech: {e}")
         return None
-
 
 def log_interaction(username: str, user_input: str, llm_response: str) -> None:
     """Logs the interaction to a tab-delimited 'logs.txt' file with timestamp, username, user input, and LLM response."""

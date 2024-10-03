@@ -20,7 +20,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     welcome_text = (
         f"Hey there {update.effective_user.first_name}! Welcome! 😈😈 \n\n"
         f"You've got {free_left} free interactions left.\n"
-        f"If you run out, you just need to buy more Indecent Credits via the menu below.\n\n"
+        f"If you run out, you just need to buy more Indecent Credits via the menu below. Audio costs ~ $1/minute. Text costs ~ $0.01/1000 chars. \n\n"
         f"⚠️ Hold tight! The first interaction might be a bit slow as the system warms up from a cold start. 🥱 \n\n"
     )
 
@@ -121,16 +121,25 @@ async def select_character(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             # Update the user's voice_id in the database (prompt is determined dynamically)
             update_user(user_id, voice_id=new_voice)
 
-            await update.message.reply_text(f"Character has been set to {emoji} {character}.", reply_markup=get_main_menu_keyboard())
+            # Retrieve and format the greeting
+            user_name = update.effective_user.first_name
+            greeting = data["greeting"].format(user_name=user_name)
+
+            await update.message.reply_text(greeting, reply_markup=get_main_menu_keyboard())
             logger.debug(
-                f"Character set to {character} (voice: {new_voice}) for user {user_id}.")
+                f"Character set to {character} (voice: {new_voice}) for user {user_id} with greeting sent."
+            )
 
             # Log interaction
-            log_interaction(update.effective_user.username or update.effective_user.first_name,
-                            f"Character set to {emoji} {character}", "Select Character")
+            log_interaction(
+                update.effective_user.username or update.effective_user.first_name,
+                f"Character set to {emoji} {character}",
+                "Select Character"
+            )
             return
 
     # Handle case where character is not recognized
     await update.message.reply_text("Character not recognized. Please select a valid character from the menu.")
     logger.error(
-        f"Character not recognized in text: {full_text} for user {user_id}.")
+        f"Character not recognized in text: {full_text} for user {user_id}."
+    )

@@ -21,20 +21,15 @@ PING_FREQUENCY = 60    # in seconds
 PING_TIMEOUT = 600      # in seconds
 
 # Menu options
-
 MENU_OPTIONS = [
-    '🏠 Home',
-    '📚 Help',
     '💰 Buy Credits',
-    '💳 Balance',
-    '🎁 Free Credits',
     '🔊 Audio On/Off',
-    '😇 Decent / 😈 Indecent',
     '💀 Nova',
     '💔 Carter',
     '💋 Natasha',
     '🔥 Onyx'
 ]
+
 # Credit packages
 CREDIT_PACKAGES = {
     'purchase_50_credits': {'credits': 50},
