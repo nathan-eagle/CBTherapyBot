@@ -1,24 +1,35 @@
+# Configuration for Cog ⚙️
+
 build:
+  # Set to true if your model requires a GPU
   gpu: true
-  python_version: "3.10"
+
+  # A list of Ubuntu apt packages to install
   system_packages:
     - git
-    - build-essential
-    - cmake
-    - libopenblas-dev
-    - libblas-dev
+    - build-essential       # Includes gcc, g++, and make
+    - cmake                 # Install cmake via pip instead
+    - ninja-build           # Ninja build system
     - libssl-dev
-    - libsqlite3-dev
+    - zlib1g-dev
+    - libstdc++6
+    - python3-dev           # Python headers
     - wget
+
+  # Python version
+  python_version: "3.11"
+
+  # Python packages
   python_packages:
-    - pip: "22.3.1"
-    - setuptools: "65.6.3"
-    - wheel: "0.38.4"
-    - llama-cpp-python[cuda]==0.1.78
-run:
-  - pip install --force-reinstall --no-cache-dir --upgrade \
-      pip setuptools wheel
-  - pip install --no-cache-dir llama-cpp-python[cuda]
-  - mkdir -p /src/models
-  - cp -r models/* /src/models/
+    - wheel==0.38.4
+    - numpy>=1.20.0
+
+  # Commands run after the environment is set up
+  run:
+    - pip install --upgrade pip setuptools wheel
+    - pip install cmake==3.27.0  # Install a compatible version of cmake
+    - pip install scikit-build==0.18.1 ninja
+    # Install llama-cpp-python from GitHub with CUDA support
+    - pip install git+https://github.com/abetlen/llama-cpp-python.git@main#egg=llama-cpp-python[cuda]
+
 predict: "predict.py:Predictor"

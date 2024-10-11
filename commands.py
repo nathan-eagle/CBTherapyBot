@@ -118,12 +118,13 @@ async def select_character(update: Update, context: ContextTypes.DEFAULT_TYPE) -
             new_voice = data["voice_id"]
             emoji = data["emoji"]
 
-            # Update the user's voice_id in the database (prompt is determined dynamically)
+            # Update the user's voice_id in the database
             update_user(user_id, voice_id=new_voice)
 
             # Retrieve and format the greeting
             user_name = update.effective_user.first_name
-            greeting = data["greeting"].format(user_name=user_name)
+            greeting_template = data["greeting"]
+            greeting = greeting_template.format(user_name=user_name)  # Format the greeting with user_name
 
             await update.message.reply_text(greeting, reply_markup=get_main_menu_keyboard())
             logger.debug(

@@ -31,11 +31,15 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
 
     # Retrieve the user profile data (voice_id and character_prompt)
     user = get_user(user_id)
-    audio_enabled = context.user_data.get('audio_enabled', False)
+    
+    # Initialize audio_enabled to True by default
+    if 'audio_enabled' not in context.user_data:
+        context.user_data['audio_enabled'] = True  # Enable audio by default
+    audio_enabled = context.user_data.get('audio_enabled', True)
 
     # Retrieve the LLM mode (Decent or Indecent) and voice_id from the user profile
     user_llm = user.get('llm', 'Indecent')  # Default to 'Indecent'
-    voice_id = user.get('voice_id', 'nova')  # Default to 'nova'
+    voice_id = user.get('voice_id', 'PB6BdkFkZLbI39GHdnbQ')  # Default to Natasha
 
     # Get the character data (prompt and voice) based on the selected voice_id
     character_data = next(
@@ -46,7 +50,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
         await update.message.reply_text("Sorry, I couldn't determine your selected character.", reply_markup=get_main_menu_keyboard())
         return
 
-    character_prompt = character_data['prompt']
+    character_prompt = character_data['prompt'].format(user_name=user_first_name)  # Format the prompt
 
     # Generate the response text based on the user's selected LLM
     if user_llm == 'Decent':
@@ -68,7 +72,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE) -> 
             await update.message.reply_text("Sorry, I couldn't generate an audio response.", reply_markup=get_main_menu_keyboard())
             return
 
-    # Calculate audio duration and credits needed
+        # Calculate audio duration and credits needed
         audio = AudioSegment.from_file(
             BytesIO(audio_bytes.getvalue()), format="mp3")
         duration_seconds = audio.duration_seconds

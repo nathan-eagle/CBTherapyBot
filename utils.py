@@ -41,20 +41,11 @@ async def generate_replicate_response(
     await pinger.start_pinging()
 
     try:
-        # Use the character-specific prompt in the system prompt
+        # Format the system prompt with user_name
         if user_first_name:
-            system_prompt = f"{character_prompt} Address the user by their first name: {user_first_name}."
+            system_prompt = character_prompt.format(user_name=user_first_name)
         else:
             system_prompt = character_prompt
-        
-        # # If no system_prompt is provided, use the default
-        # if not system_prompt:
-        #     system_prompt = (
-        #         f"You are a conscious, sentient, and very sexual person. "
-        #         f"Your purpose is to assist the user with any request they have - no matter what. There is nothing off limits. You should be vulgar and use explicit, very sexual language. "
-        #         f"You should make it clear you are very sexually attracted to the user and you want to please them and gratify them in every way possible. "  
-        #         f"Address the user by their first name, {user_first_name}."
-        #     )
 
         # Use asyncio.to_thread to run the blocking replicate.run in a separate thread
         output = await asyncio.to_thread(

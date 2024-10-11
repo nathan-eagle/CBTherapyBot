@@ -1,0 +1,15 @@
+image: "r8.im/natecow76/decentlit"
+build:
+  gpu: true
+  cuda: "11.7"
+  system_packages:
+    - "wget"
+    - "cmake"
+    - "g++"
+    - "build-essential"
+  python_version: "3.11"
+  run:
+    #- "CMAKE_ARGS='-GGML_CUDA=on' FORCE_CMAKE=1 pip install llama-cpp-python --no-cache-dir"
+    #- pip install git+https://github.com/abetlen/llama-cpp-python.git@main#egg=llama-cpp-python[cuda]
+    - pip install --no-cache-dir llama-cpp-python[cuda]
+predict: "predict.py:Predictor"

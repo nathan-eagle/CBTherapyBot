@@ -56,7 +56,7 @@ def get_user(user_id):
             'free_interactions_used': 0,
             'indecent_credits': 0,
             'llm': 'Indecent',  # Default LLM
-            'voice_id': 'onyx'  # Default to Onyx character's voice
+            'voice_id': 'PB6BdkFkZLbI39GHdnbQ'  # Default to Natasha character's voice
         }
     conn.close()
     logger.debug(f"Retrieved user {user_id}: {user}")
