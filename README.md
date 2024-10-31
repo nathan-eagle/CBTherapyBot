@@ -1,4 +1,4 @@
-# TelegramBot
+# CBT Telegram Bot
 
 This is a Telegram bot that interacts with users by generating responses using OpenAI's GPT models and converts text responses to speech using ElevenLabs. The bot allows users to toggle audio responses, check their balance, purchase credits, and more.
 
@@ -69,25 +69,14 @@ git push origin main
 
 ### To Do
 
-- Add image when they choose a character 
 
-- Start ping at /start message rather than first interaction and remove first ping immediately after first interaction.
-- Clear command to reset the conversation /clear Reset your AI (robot icon)
-
-
-- Chunk at the end of a sentence for long stories
-- Save all audio content to disk
+- Make memory persist across sessions
 - Periodically send messages to (paying) users. Allow feature to opt out
 
 
 ### Research
 
-- Improve indecent LLM latency
-- Share / post the good stories anonymously - add a share button 
-- Pricing: Character based pricing, and text only based pricing. 
-- Add a "tip" button for users to tip the character
 - Alternatives to Replicate: Runpod: https://www.runpod.io/serverless-gpu, Fly: https://fly.io/gpu
-- How to add memory associated with the user and character? 
 
 
 
