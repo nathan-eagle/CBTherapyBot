@@ -35,7 +35,7 @@ jobs:
             git reset --hard origin/main 
             source venv/bin/activate
             pip install -r requirements.txt
-            sudo systemctl restart cbtherapybot.service
+            sudo /usr/bin/systemctl restart cbtherapybot.service
           EOF
 
       # 5. (Optional) Upload Deployment Logs for Debugging
