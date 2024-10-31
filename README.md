@@ -80,9 +80,6 @@ git push origin main
 - Periodically send messages to (paying) users. Allow feature to opt out
 
 
-
-
-
 ### Research
 
 - Improve indecent LLM latency
