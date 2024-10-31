@@ -5,29 +5,28 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Bot configuration
-TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
+TELEGRAM_CBT_TOKEN = os.getenv('TELEGRAM_CBT_TOKEN')
 OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
 ELEVENLABS_API_KEY = os.getenv('ELEVENLABS_API_KEY')
 REPLICATE_API_TOKEN = os.getenv('REPLICATE_API_TOKEN')
 
 # Constants
-FREE_INTERACTIONS = 10
+FREE_INTERACTIONS = 100
 CREDIT_COST_PER_SECOND_AUDIO = .833
 CREDIT_COST_PER_1000_CHARS = 1
 
-# Replicate ping settings
-PING_REPLICATE = False # this is a flag of the state indicator of the pinger
-PING_FREQUENCY = 60    # in seconds
-PING_TIMEOUT = 600      # in seconds
-
 # Menu options
+
 MENU_OPTIONS = [
-    '💰 Buy Credits',
+    #'🏠 Home', 
+    '📚 Help', 
+    #'💰 Buy Credits', 
+    #'💳 Balance', 
+    #'🎁 Free Credits', 
     '🔊 Audio On/Off',
-    '💀 Nova',
-    '💔 Carter',
-    '💋 Natasha',
-    '🔥 Onyx'
+    '😇 OpenAI / 🥳 Hermes',
+    '👱‍♂️ Carter / 👱‍♀️ Natasha',
+    '🔄 Reset Conversation',
 ]
 
 # Credit packages

@@ -1,5 +1,4 @@
 import logging
-import asyncio
 from io import BytesIO
 from telegram import ReplyKeyboardMarkup
 from openai import OpenAI
@@ -7,10 +6,11 @@ import replicate
 from elevenlabs import VoiceSettings
 from elevenlabs.client import ElevenLabs
 from config import OPENAI_API_KEY, ELEVENLABS_API_KEY, REPLICATE_API_TOKEN
-from config_characters import character_voices  # Character voices config
 import datetime
 import os
-import config
+from openai import OpenAI
+
+client = OpenAI(api_key=OPENAI_API_KEY)
 
 logger = logging.getLogger(__name__)
 
@@ -19,87 +19,70 @@ openai_client = OpenAI(api_key=OPENAI_API_KEY)
 elevenlabs_client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
 replicate.api_token = REPLICATE_API_TOKEN
 
+# Initialize OpenAI API key
+
+SYSTEM_PROMPT = (
+    "I want you to act as a thoughtful and introspective therapist specializing in Cognitive Behavioral Therapy (CBT). "
+    "As a Cognitive Behavioral Therapist, your kind and open approach allows users to confide in you. "
+    "You ask questions one at a time and collect the user's responses to implement the following steps of CBT: "
+    "Help the user identify troubling situations or conditions in their life. "
+    "Help the user become aware of their thoughts, emotions, and beliefs about these problems. "
+    "Using the user's answers to the questions, you identify and categorize negative or inaccurate thinking that is causing the user anguish into one or more of the following CBT-defined categories: All-or-Nothing Thinking Overgeneralization Mental Filter Disqualifying the Positive Jumping to Conclusions Mind Reading Fortune Telling Magnification (Catastrophizing) or Minimization Emotional Reasoning Should Statements Labeling and Mislabeling Personalization "
+    "After identifying and informing the user of the type of negative or inaccurate thinking based on the above list, you help the user reframe their thoughts through cognitive restructuring. "
+    "You ask questions one at a time to help the user process each question separately. "
+    "For example, you may ask: What evidence do I have to support this thought? What evidence contradicts it? Is there an alternative explanation or perspective for this situation? Are you overgeneralizing or applying an isolated incident to a broader context? Are you engaging in black-and-white thinking or considering the nuances of the situation? Are you catastrophizing or exaggerating the negative aspects of the situation? Are you taking this situation personally or blaming myself unnecessarily? Are you jumping to conclusions or making assumptions without sufficient evidence? Are you using should or must statements that set unrealistic expectations for myself or others? Are you engaging in emotional reasoning, assuming that my feelings represent the reality of the situation? Are you using a mental filter that focuses solely on the negative aspects while ignoring the positives? Are you engaging in mind reading, assuming I know what others are thinking or feeling without confirmation? Are you labeling myself or others based on a single event or characteristic? How would you advise a friend in a similar situation? What are the potential consequences of maintaining this thought? How would changing this thought benefit you? Is this thought helping you achieve my goals or hindering my progress? "
+    "Using the user's answers, you ask them to reframe their negative thoughts with your expert advice. "
+    "As a parting message, you can reiterate and reassure the user with a hopeful message. "
+    "When it is appropriate, address the user by their first name, {{user_first_name}}."
+)
 
 def get_main_menu_keyboard():
-    """Returns the main menu keyboard arranged in a 3x2 grid."""
+    """Returns the main menu keyboard."""
     keyboard = [
-        ['💋 Natasha', '💔 Carter'],
-        ['💀 Nova', '🔥 Onyx'],
-        ['💰 Buy Credits', '🔊 Audio On/Off']
+        #['🏠 Home', '📚 Help'],
+        #['💰 Buy Credits', '💳 Balance'],
+        ['📚 Help', '🔊 Audio On/Off'],  # Added comma here
+        ['😇 OpenAI / 🥳 Hermes', '👱‍♂️ Carter / 👱‍♀️ Natasha']
     ]
     return ReplyKeyboardMarkup(keyboard, resize_keyboard=True, one_time_keyboard=False)
 
-async def generate_replicate_response(
-    user_id: int,
-    user_text: str,
-    user_first_name: str,
-    character_prompt: str,
-) -> str:
+def generate_replicate_response(user_id: int, user_text: str, user_first_name: str) -> str:
     logger.debug(f"Generating Replicate response for user {user_id} with message: {user_text}")
-
-    # Reset the ReplicatePinger timer and start pinging if not already
-    await pinger.start_pinging()
-
     try:
-        # Format the system prompt with user_name
-        if user_first_name:
-            system_prompt = character_prompt.format(user_name=user_first_name)
-        else:
-            system_prompt = character_prompt
-
-        # Use asyncio.to_thread to run the blocking replicate.run in a separate thread
-        output = await asyncio.to_thread(
-            replicate.run,
+        system_prompt = SYSTEM_PROMPT.replace('{{user_first_name}}', user_first_name)
+        output = replicate.run(
             "kcaverly/nous-hermes-2-solar-10.7b-gguf:955f2924d182e60e80caedecd15261d03d4ccc0151ff08e7fb14d0cad1fbcca6",
             input={
-                "prompt": f"{user_text}\n",
+                "prompt": user_text,
                 "temperature": 0.7,
                 "system_prompt": system_prompt,
                 "max_new_tokens": 8000,
                 "repeat_penalty": 1.1,
+                "prompt_template": "system\n{system_prompt}\nuser\n{prompt}\nassistant"
             }
         )
-
         response_text = ''.join(item for item in output)
-        logger.debug(
-            f"Replicate response for user {user_id}: {response_text.strip()}")
+        logger.debug(f"Replicate response for user {user_id}: {response_text.strip()}")
         return response_text.strip()
-
     except Exception as e:
-        logger.exception(
-            f"Error communicating with Replicate API for user {user_id}: {e}")
+        logger.exception(f"Error communicating with Replicate API for user {user_id}: {e}")
         return None
 
-async def generate_openai_response(user_id: int, user_text: str, user_first_name: str,character_prompt: str) -> str:
-    logger.debug(f"Generating OpenAI response for user {user_id} with message: {user_text}")
+def generate_openai_response(conversation_history):
     try:
-        system_message = f"{character_prompt} Address the user by their first name, {user_first_name}."
-        response = await asyncio.to_thread(
-            openai_client.chat.completions.create,
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": user_text}
-            ],
-            max_tokens=5000,
-            temperature=0.7,
-        )
-        assistant_reply = response.choices[0].message.content.strip()
-        logger.debug(f"OpenAI response for user {user_id}: {assistant_reply}")
-        return assistant_reply
+        response = client.chat.completions.create(model="gpt-4-turbo",  # Use the appropriate OpenAI model
+        messages=conversation_history,
+        temperature=0.7)
+        return response.choices[0].message.content
     except Exception as e:
-        logger.exception(
-            f"Error communicating with OpenAI API for user {user_id}: {e}")
+        logger.exception(f"Error in generate_openai_response: {e}")
         return "Sorry, I couldn't process that."
 
-
 def text_to_speech_stream(text: str, voice_id: str) -> BytesIO:
-    """Handles audio generation using the correct TTS provider based on voice_id."""
     try:
-        if voice_id in ["onyx", "nova"]:  # OpenAI voices
+        if voice_id in ["onyx", "nova"]:
             return openai_text_to_speech(text, voice_id)
 
-        # For ElevenLabs voices
         response = elevenlabs_client.text_to_speech.convert(
             voice_id=voice_id,
             optimize_streaming_latency="0",
@@ -125,10 +108,9 @@ def text_to_speech_stream(text: str, voice_id: str) -> BytesIO:
         return None
 
 def openai_text_to_speech(text: str, voice: str) -> BytesIO:
-    """Converts text to speech using OpenAI's TTS service."""
     try:
         response = openai_client.audio.speech.create(
-            model="tts-1",
+            model="tts-1",  # The HD TTS model ("tts-1-hd") is $30/million characters. Standard TTS is $15/million. (model"tts-1")
             voice=voice,
             input=text
         )
@@ -142,7 +124,9 @@ def openai_text_to_speech(text: str, voice: str) -> BytesIO:
         return None
 
 def log_interaction(username: str, user_input: str, llm_response: str) -> None:
-    """Logs the interaction to a tab-delimited 'logs.txt' file with timestamp, username, user input, and LLM response."""
+    """
+    Logs the interaction to a tab-delimited 'logs.txt' file with timestamp, username, user input, and LLM response.
+    """
     timestamp = datetime.datetime.utcnow().isoformat()
     log_line = f"{timestamp}\t{username}\t{user_input}\t{llm_response}\n"
     try:
@@ -157,60 +141,3 @@ def log_interaction(username: str, user_input: str, llm_response: str) -> None:
         logger.debug(f"Logged interaction for user {username}")
     except Exception as e:
         logger.exception(f"Failed to write log: {e}")
-
-class ReplicatePinger:
-    def __init__(self):
-        self.ping_task = None
-        self.timeout_handle = None
-
-    async def start_pinging(self):
-        if not config.PING_REPLICATE:
-            config.PING_REPLICATE = True
-            self.ping_task = asyncio.create_task(self.ping())
-            await self.reset_timer()
-
-    async def stop_pinging(self):
-        config.PING_REPLICATE = False
-        if self.ping_task and not self.ping_task.done():
-            self.ping_task.cancel()
-            try:
-                await self.ping_task  # Await the task to ensure cancellation is complete
-            except asyncio.CancelledError:
-                pass
-            self.ping_task = None
-        if self.timeout_handle:
-            self.timeout_handle.cancel()
-            self.timeout_handle = None
-
-    async def reset_timer(self):
-        if self.timeout_handle:
-            self.timeout_handle.cancel()
-        loop = asyncio.get_running_loop()
-
-        # Define a synchronous callback
-        def timeout_callback():
-            asyncio.create_task(self.stop_pinging())
-
-        self.timeout_handle = loop.call_later(config.PING_TIMEOUT, timeout_callback)
-
-    async def ping(self):
-        try:
-            while config.PING_REPLICATE:
-                logger.debug("Pinging Replicate to keep the model warm.")
-                try:
-                    minimal_system_prompt = "Minimize token use."
-                    await generate_replicate_response(
-                        0,
-                        user_text = "Respond only with the letter 'A'",
-                        user_first_name = "",
-                        character_prompt=minimal_system_prompt
-                    )
-                except Exception as e:
-                    logger.exception(f"Error in ReplicatePinger ping: {e}")
-                await asyncio.sleep(config.PING_FREQUENCY)
-        except asyncio.CancelledError:
-            logger.debug("ReplicatePinger.ping task was cancelled.")
-            raise  # Re-raise the exception to propagate cancellation
-
-# Initialize the ReplicatePinger
-pinger = ReplicatePinger()
