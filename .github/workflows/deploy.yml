@@ -29,13 +29,13 @@ jobs:
       - name: Deploy to Server
         run: |
           ssh -o StrictHostKeyChecking=no telegrambot@67.207.87.95 << 'EOF'
-            cd /home/telegrambot/TelegramBot
+            cd /home/telegrambot/CBTherapyBot
             
             git fetch origin main
             git reset --hard origin/main 
             source venv/bin/activate
             pip install -r requirements.txt
-            sudo systemctl restart telegrambot.service
+            sudo systemctl restart cbtherapybot.service
           EOF
 
       # 5. (Optional) Upload Deployment Logs for Debugging
